@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!212 &146938697 stripped
+SpriteRenderer:
+  m_CorrespondingSourceObject: {fileID: 2688475301458700128, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
+  m_PrefabInstance: {fileID: 1075909094}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,10 +399,22 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -3901611443832661195, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
+      propertyPath: _stats
+      value: 
+      objectReference: {fileID: 11400000, guid: c065818b215c0e2469b75575cc2773ae, type: 2}
+    - target: {fileID: 1092007938667521802, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
+      propertyPath: _spriteRenderer
+      value: 
+      objectReference: {fileID: 146938697}
     - target: {fileID: 3328857460299540115, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
       propertyPath: m_Name
       value: PlayerKing
       objectReference: {fileID: 0}
+    - target: {fileID: 3490718414124157380, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
+      propertyPath: _stats
+      value: 
+      objectReference: {fileID: 11400000, guid: c065818b215c0e2469b75575cc2773ae, type: 2}
     - target: {fileID: 4357049188764079561, guid: 6d0217ad8251ba34eb4ff58e0f172f91, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

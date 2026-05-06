@@ -24,4 +24,10 @@ public class GameManager : MonoBehaviour
         }
         Instance = this;
     }
+    
+    public void TriggerGameOver()
+    {                                                                                                                                                                                 
+        // Phase 4: load game over screen here                                                                                                                                      
+        Debug.Log("Game Over");
+    }
 }

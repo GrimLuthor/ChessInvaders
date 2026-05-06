@@ -1,120 +1,94 @@
-# Chess Invaders — Collaborator Onboarding
+Chess Invaders — ONBOARDING.md
 
-Welcome. This doc is everything you need to understand the project and get running.
+This file is for collaborators joining the project. It is updated regularly as the project evolves.
+Last updated: [DATE]
+Current stage: Gray box
 
----
 
-## What Is This Game
+What Is This Game
+Chess × Space Invaders. Player controls a King piece with free movement on an 8×8 board. Enemy chess pieces advance one tile forward on a shared timer and shoot in their chess movement patterns. Kill the enemy King in wave 3 to win.
 
-Chess Invaders is a top-down 2D game jam project combining chess and Space Invaders.
+Repo Setup
+bashgit clone [REPO URL]
+Open in Unity [VERSION]. No additional package installs required — all dependencies are in the project.
+Unity version: [FILL IN]
+Render pipeline: 2D (URP / Built-in — fill in)
+Target platforms: PC, WebGL
 
-The player controls a **King piece** that moves freely (not tile-locked) across a standard 8×8 chess board. Waves of enemy chess pieces advance toward the player one tile at a time on a shared timer. The player shoots projectiles aimed with the mouse and has a burst special attack. The enemies shoot back using their chess movement patterns as attack patterns — a Rook shoots in straight lines, a Bishop along diagonals, a Knight in L-shapes, etc. Before each shot, a visible warning flashes on the target tiles so the player can dodge.
-
-There are 3 waves. The final wave includes an enemy King — killing it is the win condition. The player losing all HP is the lose condition.
-
-**Current phase:** gray box — placeholder art only, building gameplay systems.
-
----
-
-## Current Progress
-
-| System | Status |
-|--------|--------|
-| Board generation (8×8 grid, world↔tile coordinate helpers) | Done |
-| GameManager (singleton access hub) | Done |
-| Player free movement (WASD, board-bounded) | Done |
-| Player shooting | Done |
-| Player burst attack | Deferred — post gray box |
-| Player health | Not started |
-| Enemy base class | Not started |
-| Enemy AI & shooting patterns | Not started |
-| Wave system | Not started |
-| UI (HP bar, timer, wave roster) | Not started |
-
----
-
-## Prerequisites
-
-| Tool | Version | Notes |
-|------|---------|-------|
-| Unity Editor | **6000.3.11f1** | Install via Unity Hub. Match this exactly — Unity 6 asset serialization is not backwards-compatible with 2022/2023. |
-| Git | Any recent | LFS not currently used. |
-| IDE | Your choice | Rider, VS 2022, or VS Code with the Unity extension all work. Solution/project files are gitignored — your editor regenerates them on first open. |
-
----
-
-## Getting Started
-
-```bash
-git clone <repo-url>
-cd ChessInvaders
-```
-
-Open **Unity Hub → Open → Add project from disk** and point it at the repo root.
-Let Unity import — the `Library/` cache builds on first open (~1-2 min).
-
-> **Do not commit `Library/`, `Temp/`, or `UserSettings/`.** They are gitignored — machine-local and regenerated automatically.
-
----
-
-## Project Layout
-
-```
+Project Structure
 Assets/
 ├── Scripts/
-│   ├── Core/       # GameManager, WaveManager, BoardManager
-│   ├── Player/     # Movement, Shooting, Health
-│   ├── Enemies/    # EnemyBase + per-piece subclasses
-│   ├── Combat/     # Projectile, DamageSystem, AttackPatterns
-│   ├── UI/         # HUD, HealthBar, WaveIndicator, TimerDisplay
-│   └── Utils/      # Constants, Enums, GridHelpers
-├── Prefabs/        # All spawnable objects — prefabs are the source of truth
-├── Scenes/
-│   ├── MainMenu.unity
-│   └── Game.unity
-└── Placeholder/    # Gray-box art. Final art goes in Assets/Art/ — don't overwrite these
-```
+│   ├── Core/            # GameManager, WaveManager, BoardManager
+│   ├── Player/          # PlayerMovement, PlayerShooting, PlayerHealth
+│   ├── Enemies/         # EnemyBase, per-piece components, ShootingAI
+│   ├── Combat/          # Projectile, AttackPatterns, IntentIndicator
+│   ├── UI/              # HUD, WaveRosterUI, ScreenManager
+│   └── Utils/           # Constants, Enums, GridHelpers
+├── Prefabs/
+│   ├── Player/
+│   ├── Enemies/
+│   ├── Projectiles/
+│   └── UI/
+├── ScriptableObjects/
+│   ├── PlayerStats.asset
+│   ├── EnemyStats_[PieceType].asset  (one per enemy type)
+│   ├── WaveData_[1-3].asset
+│   ├── GamePalette.asset
+│   └── AudioLibrary.asset (when audio is added)
+├── Art/
+│   ├── Placeholder/     # Gray box sprites — do not overwrite
+│   └── Final/           # Designer assets go here when delivered
+└── Scenes/
+└── Game.unity
 
----
+Current State
+SystemStatusBoard generation✅ DoneGameManager✅ DonePlayer movement✅ DonePlayer shooting✅ DonePlayer health[UPDATE]Enemy base[UPDATE]Enemy AI & shooting[UPDATE]Wave system[UPDATE]UI[UPDATE]
 
-## Key Architecture Rules
+Key Architecture Decisions
+Read these before writing any code.
+BoardManager is the grid authority
+All world↔tile coordinate conversion goes through BoardManager helpers. BoardManager.tileSize is the single value that controls all spatial scaling. Never write raw grid arithmetic anywhere else.
+Visual child pattern
+Every entity prefab has a Visual child GameObject holding the SpriteRenderer (and eventually Animator). Gameplay scripts live on the root. This means art can be swapped by replacing the Visual child — no script changes needed.
+EnemyPawn (root)       ← EnemyBase, ShootingAI, Collider2D
+└── Visual           ← SpriteRenderer, Animator
+└── HPBarAnchor
+ScriptableObjects for all tuning
+HP, speeds, cooldowns, damage, fire rates — all live in ScriptableObject assets in ScriptableObjects/. Never hardcode numeric values in scripts.
+Object pooling for projectiles and indicators
+Player projectiles, enemy projectiles, and intent indicators all use Unity's ObjectPool<T>. Never Instantiate/Destroy these. PoolManager holds all pools with serialized size fields.
+GamePalette for all colors
+All colors (projectile colors, intent highlight, UI accent) are defined in GamePalette.asset. Edit that one asset to retheme anything visual.
 
-These are load-bearing — don't change them without syncing:
+Integrating Designer Assets
+When you receive final art assets:
 
-- **`BoardManager.TileSize`** — one serialized float that all grid-to-world math flows through. Never hardcode tile sizes or assume `1 unit = 1 tile`. Always go through `BoardManager.GridToWorld()` / `WorldToGrid()` helpers.
-- **`GameManager`** — singleton access point for `BoardManager`, `WaveManager`, `PlayerHealth`. No `FindObjectOfType` anywhere else.
-- **`WaveManager`** — central orchestrator for enemy step timer and spawning. Sync before modifying.
-- **Prefabs are the source of truth** — all spawnable objects are prefabs. Nothing is built via `new GameObject()` in code. Designers swap art by updating the prefab, not touching scripts.
-- **Entity prefab structure** — every entity (player, enemies) has a `Visual` child GameObject holding the SpriteRenderer. Gameplay scripts live on the root. This lets art be swapped by replacing the `Visual` child without touching any code.
-- **Object pooling** — projectiles and intent indicators use `ObjectPool<T>`. Never call `Destroy()` on them; always return to pool.
+Place sprites/sheets in Assets/Art/Final/ — do not touch Assets/Art/Placeholder/
+For each entity: open its prefab → select the Visual child → update the SpriteRenderer sprite reference
+Add an Animator to the Visual child and assign the animation controller
+Adjust HPBarAnchor child position if the new sprite has different dimensions
+If tile size changes: update BoardManager.tileSize — everything rescales automatically
+To retheme colors: edit GamePalette.asset only
 
----
+No script changes should be needed for an art swap.
 
-## Branch & Workflow Conventions
+Working on This Repo
 
-- **`main`** — stable, always builds. PRs only, no direct pushes.
-- **`dev`** — integration branch. Merge feature branches here first.
-- **Feature branches** — `feature/<short-name>` (e.g. `feature/enemy-rook-ai`).
-- Commit messages: imperative mood, lowercase (`add pawn shooting pattern`, `fix burst cooldown UI`).
+Scenes cause merge conflicts. Talk to the team before editing Game.unity at the same time as someone else.
+Adding a new enemy type: Subclass EnemyBase (or add a component alongside it), create an EnemyStats ScriptableObject asset, create a prefab following the Visual child pattern, add it to the relevant WaveData asset. No changes to GameManager or WaveManager needed.
+Don't modify GameManager or WaveManager without syncing with the team — these are central orchestrators.
+Prefer prefab variants over runtime parameterization. If wave 3 needs a stronger pawn, make a prefab variant with a different EnemyStats asset — don't add conditional logic to the pawn script.
 
-### Scene merge conflicts
 
-Unity scene files are YAML and merge badly.
-**Only one person edits a scene at a time.** Coordinate before opening `Game.unity`.
-If a change can be made inside a prefab instead of the scene, do it there.
+What's Out of Scope (for now)
 
----
+Player burst attack (deferred post gray box)
+Sound / music
+Main menu
+Save/load
+Difficulty settings
+Gamepad support
 
-## Adding a New Enemy Type
 
-1. Subclass `EnemyBase` in `Assets/Scripts/Enemies/`
-2. Create a ScriptableObject stat asset (HP, fire rate, speed) in `Assets/Data/`
-3. Build a prefab in `Assets/Prefabs/Enemies/` with the `Visual` child structure
-4. Add it to the relevant `WaveData` ScriptableObject — no code changes to `WaveManager`
-
----
-
-## Questions / Sync Points
-
-- Ping the primary dev before touching `GameManager`, `WaveManager`, or any scene file.
-- New art or animations: replace the `Visual` child on the relevant prefab. Root scripts stay untouched.
+Questions / Contact
+[FILL IN — who to ping for what]
