@@ -1,7 +1,35 @@
 # Chess Invaders — Collaborator Onboarding
 
-Welcome. This doc gets you to a running project in under 10 minutes.  
-Full design and architecture lives in **[CLAUDE.md](CLAUDE.md)** — read that after this.
+Welcome. This doc is everything you need to understand the project and get running.
+
+---
+
+## What Is This Game
+
+Chess Invaders is a top-down 2D game jam project combining chess and Space Invaders.
+
+The player controls a **King piece** that moves freely (not tile-locked) across a standard 8×8 chess board. Waves of enemy chess pieces advance toward the player one tile at a time on a shared timer. The player shoots projectiles aimed with the mouse and has a burst special attack. The enemies shoot back using their chess movement patterns as attack patterns — a Rook shoots in straight lines, a Bishop along diagonals, a Knight in L-shapes, etc. Before each shot, a visible warning flashes on the target tiles so the player can dodge.
+
+There are 3 waves. The final wave includes an enemy King — killing it is the win condition. The player losing all HP is the lose condition.
+
+**Current phase:** gray box — placeholder art only, building gameplay systems.
+
+---
+
+## Current Progress
+
+| System | Status |
+|--------|--------|
+| Board generation (8×8 grid, world↔tile coordinate helpers) | Done |
+| GameManager (singleton access hub) | Done |
+| Player free movement (WASD, board-bounded) | Done |
+| Player shooting | Done |
+| Player burst attack | Deferred — post gray box |
+| Player health | Not started |
+| Enemy base class | Not started |
+| Enemy AI & shooting patterns | Not started |
+| Wave system | Not started |
+| UI (HP bar, timer, wave roster) | Not started |
 
 ---
 
@@ -22,11 +50,10 @@ git clone <repo-url>
 cd ChessInvaders
 ```
 
-Open **Unity Hub → Open → Add project from disk** and point it at the repo root.  
+Open **Unity Hub → Open → Add project from disk** and point it at the repo root.
 Let Unity import — the `Library/` cache builds on first open (~1-2 min).
 
-> **Do not commit `Library/`, `Temp/`, or `UserSettings/`.**  
-> They are gitignored for a reason — they are machine-local and regenerated automatically.
+> **Do not commit `Library/`, `Temp/`, or `UserSettings/`.** They are gitignored — machine-local and regenerated automatically.
 
 ---
 
@@ -48,7 +75,18 @@ Assets/
 └── Placeholder/    # Gray-box art. Final art goes in Assets/Art/ — don't overwrite these
 ```
 
-See `CLAUDE.md §Architecture Guidelines` for naming conventions, ScriptableObject usage, object pooling rules, and the `BoardManager.tileSize` contract that every system depends on.
+---
+
+## Key Architecture Rules
+
+These are load-bearing — don't change them without syncing:
+
+- **`BoardManager.TileSize`** — one serialized float that all grid-to-world math flows through. Never hardcode tile sizes or assume `1 unit = 1 tile`. Always go through `BoardManager.GridToWorld()` / `WorldToGrid()` helpers.
+- **`GameManager`** — singleton access point for `BoardManager`, `WaveManager`, `PlayerHealth`. No `FindObjectOfType` anywhere else.
+- **`WaveManager`** — central orchestrator for enemy step timer and spawning. Sync before modifying.
+- **Prefabs are the source of truth** — all spawnable objects are prefabs. Nothing is built via `new GameObject()` in code. Designers swap art by updating the prefab, not touching scripts.
+- **Entity prefab structure** — every entity (player, enemies) has a `Visual` child GameObject holding the SpriteRenderer. Gameplay scripts live on the root. This lets art be swapped by replacing the `Visual` child without touching any code.
+- **Object pooling** — projectiles and intent indicators use `ObjectPool<T>`. Never call `Destroy()` on them; always return to pool.
 
 ---
 
@@ -61,35 +99,22 @@ See `CLAUDE.md §Architecture Guidelines` for naming conventions, ScriptableObje
 
 ### Scene merge conflicts
 
-Unity scene files (`.unity`) are YAML and merge badly.  
-**Rule: only one person edits a scene at a time.** Coordinate in chat before opening `Game.unity`.  
-Prefer prefab-based workflows — if a change can be made in a prefab instead of the scene, do it there.
+Unity scene files are YAML and merge badly.
+**Only one person edits a scene at a time.** Coordinate before opening `Game.unity`.
+If a change can be made inside a prefab instead of the scene, do it there.
 
 ---
 
-## Key Architecture Contracts
+## Adding a New Enemy Type
 
-A few things that everything else depends on — don't change these without a sync:
-
-- **`BoardManager.tileSize`** — single serialized float that all grid-to-world math flows through. Never assume `1 unit = 1 tile` in code; always go through `BoardManager` helpers.
-- **`GameManager`** — singleton-style access point for `BoardManager`, `WaveManager`, `PlayerHealth`. Don't add `FindObjectOfType` calls elsewhere.
-- **`WaveManager`** — central orchestrator for the step timer and enemy spawning. Sync before modifying.
-- **Object pooling** — projectiles and intent indicators use `ObjectPool<T>` from day one. Never call `Destroy()` on them; always return to pool.
-
----
-
-## Using Claude Code (optional)
-
-The primary dev uses [Claude Code](https://claude.ai/code) (an AI coding assistant CLI) with project instructions in `CLAUDE.md`.  
-You don't need to use it, but if you do:
-- Install: `npm install -g @anthropic-ai/claude-code`
-- Run `claude` in the repo root — it picks up `CLAUDE.md` automatically.
-- Your personal Claude settings live in `.claude/` (gitignored) — they won't affect others.
+1. Subclass `EnemyBase` in `Assets/Scripts/Enemies/`
+2. Create a ScriptableObject stat asset (HP, fire rate, speed) in `Assets/Data/`
+3. Build a prefab in `Assets/Prefabs/Enemies/` with the `Visual` child structure
+4. Add it to the relevant `WaveData` ScriptableObject — no code changes to `WaveManager`
 
 ---
 
 ## Questions / Sync Points
 
 - Ping the primary dev before touching `GameManager`, `WaveManager`, or any scene file.
-- New enemy type? Subclass `EnemyBase`, create a `ScriptableObject` stat asset, add to the relevant `WaveData`. See `CLAUDE.md §Wave System`.
-- New art or animations? Replace the `Visual` child GameObject on the relevant prefab. Root gameplay scripts stay untouched.
+- New art or animations: replace the `Visual` child on the relevant prefab. Root scripts stay untouched.

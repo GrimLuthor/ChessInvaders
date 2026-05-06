@@ -9,10 +9,10 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     [SerializeField] private BoardManager _boardManager;
+    [SerializeField] private PoolManager  _poolManager;
 
-    // Shorthand accessors so callsites read GameManager.Board.GridToWorld(...)
-    // rather than GameManager.Instance._boardManager.GridToWorld(...)
     public static BoardManager Board => Instance._boardManager;
+    public static PoolManager  Pool  => Instance._poolManager;
 
     private void Awake()
     {
