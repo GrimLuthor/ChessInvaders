@@ -3,8 +3,9 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour, IPoolable
 {
-    [SerializeField] private int       _damage       = 1;
-    [SerializeField] private LayerMask _damageLayers = ~0;
+    [SerializeField] private int       _damage           = 1;
+    [SerializeField] private LayerMask _damageLayers     = ~0;
+    [SerializeField] private LayerMask _passThroughLayers = 0;
 
     private Rigidbody2D _rb;
     private Action      _returnToPool;
@@ -24,6 +25,7 @@ public class Projectile : MonoBehaviour, IPoolable
         _returnToPool      = null;
         _maxDistanceSqr    = float.MaxValue;
         _ignoredCollider   = null;
+        _passThroughLayers = 0;
     }
 
     public void OnDespawn()
@@ -32,7 +34,8 @@ public class Projectile : MonoBehaviour, IPoolable
         gameObject.SetActive(false);
     }
 
-    public void SetDamage(int damage) => _damage = damage;
+    public void SetDamage(int damage)               => _damage = damage;
+    public void SetPassThrough(LayerMask layers)    => _passThroughLayers = layers;
 
     public void Launch(Vector2 direction, float speedInTiles, Action returnToPool,
         float maxDistance = float.MaxValue, Collider2D ignore = null)
@@ -59,6 +62,7 @@ public class Projectile : MonoBehaviour, IPoolable
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (other == _ignoredCollider) return;
+        if ((_passThroughLayers & (1 << other.gameObject.layer)) != 0) return;
         if ((_damageLayers & (1 << other.gameObject.layer)) != 0)
             other.GetComponent<IDamageable>()?.TakeDamage(_damage);
         Despawn();

@@ -8,23 +8,37 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     private void OnEnable()  => ActiveEnemies.Add(this);
     private void OnDisable() => ActiveEnemies.Remove(this);
-    [SerializeField] private EnemyStats _stats;
-    [SerializeField] private SpriteRenderer _spriteRenderer;  // Visual child's SpriteRenderer
 
-    public event Action OnDeath;
-    public event Action<float, float> OnHealthChanged;  // current, max
+    [SerializeField] private EnemyStats    _stats;
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+
+    public event Action           OnDeath;
+    public event Action<float, float> OnHealthChanged;
 
     public float      CurrentHp    { get; private set; }
     public float      MaxHp        => _stats.MaxHp;
     public EnemyStats Stats        => _stats;
     public Vector2Int TilePosition { get; private set; }
 
+    // Fallback for scene-placed test enemies. Ignored when WaveManager calls SetTilePosition first.
     [SerializeField] private Vector2Int _startingTile = new(4, 6);
+    private bool _positionSet;
+
+    private void Awake()
+    {
+        CurrentHp = _stats.MaxHp;
+    }
 
     private void Start()
     {
+        if (!_positionSet)
+            SetTilePosition(_startingTile);
+    }
+
+    public void ResetHealth()
+    {
         CurrentHp = _stats.MaxHp;
-        SetTilePosition(_startingTile);
+        OnHealthChanged?.Invoke(CurrentHp, _stats.MaxHp);
     }
 
     public void TakeDamage(float amount)
@@ -38,9 +52,9 @@ public class EnemyBase : MonoBehaviour, IDamageable
             Die();
     }
 
-    // Called by WaveManager on spawn and each step tick
     public void SetTilePosition(Vector2Int tile)
     {
+        _positionSet = true;
         TilePosition = tile;
         transform.position = GameManager.Board.GetTileCenter(tile);
     }

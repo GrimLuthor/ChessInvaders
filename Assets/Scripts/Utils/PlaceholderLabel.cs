@@ -6,9 +6,17 @@ public class PlaceholderLabel : MonoBehaviour
     [SerializeField] private PieceType      _pieceType;
     [SerializeField] private SpriteRenderer _spriteRenderer;
 
-    private void Awake()
+    private void Awake() => Apply(_pieceType);
+
+    public void Refresh(PieceType newType)
     {
-        _spriteRenderer.color = _pieceType switch
+        _pieceType = newType;
+        Apply(newType);
+    }
+
+    private void Apply(PieceType type)
+    {
+        _spriteRenderer.color = type switch
         {
             PieceType.Pawn   => new Color(0.6f, 0.6f, 0.6f),
             PieceType.Rook   => new Color(0.2f, 0.6f, 1.0f),

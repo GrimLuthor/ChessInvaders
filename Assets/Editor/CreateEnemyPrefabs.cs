@@ -54,8 +54,9 @@ public static class CreateEnemyPrefabs
         root.layer = LayerMask.NameToLayer("Enemy");
         root.transform.localScale = new Vector3(0.9f, 0.9f, 1f);
 
-        var enemyBase = root.AddComponent<EnemyBase>();
-        root.AddComponent<BoxCollider2D>();
+        var enemyBase  = root.AddComponent<EnemyBase>();
+        var col        = root.AddComponent<CircleCollider2D>();
+        col.radius     = 0.35f;
         var shootingAI = root.AddComponent<ShootingAI>();
 
         // ── Visual ──────────────────────────────────────────────────────────

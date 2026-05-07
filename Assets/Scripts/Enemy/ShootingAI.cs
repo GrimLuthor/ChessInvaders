@@ -6,17 +6,27 @@ using UnityEngine;
 public class ShootingAI : MonoBehaviour
 {
     [SerializeField] private PieceType  _pieceType;
-    [SerializeField] private Vector2Int _forwardDir = new(0, -1); // enemies advance toward y=0
+    [SerializeField] private Vector2Int _forwardDir = new(0, -1);
+
+    public PieceType PieceType => _pieceType;
+
+    public void Promote(PieceType newType)
+    {
+        _pieceType = newType;
+        _label?.Refresh(newType);
+    }
 
     private EnemyBase        _enemy;
     private Collider2D       _collider;
     private Coroutine        _shootRoutine;
     private IntentIndicator  _activeIndicator;
+    private PlaceholderLabel _label;
 
     private void Awake()
     {
         _enemy    = GetComponent<EnemyBase>();
         _collider = GetComponent<Collider2D>();
+        _label    = GetComponentInChildren<PlaceholderLabel>();
     }
 
     private void OnEnable()
@@ -84,6 +94,8 @@ public class ShootingAI : MonoBehaviour
 
     private IEnumerator TelegraphAndShoot(Vector2Int targetTile)
     {
+        Vector2Int positionAtShot = _enemy.TilePosition;
+
         _activeIndicator = GameManager.Pool.GetIntentIndicator();
         _activeIndicator.transform.position = GameManager.Board.GetTileCenter(targetTile);
 
@@ -91,12 +103,16 @@ public class ShootingAI : MonoBehaviour
 
         ReturnActiveIndicator();
 
+        if (_enemy.TilePosition != positionAtShot) yield break;
+
         Vector2 targetWorld = GameManager.Board.GetTileCenter(targetTile);
         Vector2 dir = targetWorld - (Vector2)transform.position;
         if (dir.sqrMagnitude < 0.001f) yield break;
 
         Projectile p = GameManager.Pool.GetEnemyProjectile();
         p.SetDamage(_enemy.Stats.ProjectileDamage);
+        if (_pieceType == PieceType.Knight)
+            p.SetPassThrough(1 << Layers.Enemy);
         p.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
         float maxDist = AttackPatterns.IsSliding(_pieceType)
             ? float.MaxValue
