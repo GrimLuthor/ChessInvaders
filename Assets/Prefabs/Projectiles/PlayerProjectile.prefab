@@ -84,7 +84,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 7482667652216324306, guid: 5653e1b4421b1834396b8e733b3cad9c, type: 3}
+  m_Sprite: {fileID: -2413806693520163455, guid: 2d2ac0ac868640f43ab2aaa1b7eb9b69, type: 3}
   m_Color: {r: 1, g: 0.8261974, b: 0.33773577, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -170,3 +170,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   _damage: 1
+  _damageLayers:
+    serializedVersion: 2
+    m_Bits: 256

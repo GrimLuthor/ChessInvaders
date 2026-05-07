@@ -10,9 +10,13 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private BoardManager _boardManager;
     [SerializeField] private PoolManager  _poolManager;
+    [SerializeField] private GamePalette  _gamePalette;
+    [SerializeField] private Transform    _playerTransform;
 
-    public static BoardManager Board => Instance._boardManager;
-    public static PoolManager  Pool  => Instance._poolManager;
+    public static BoardManager Board   => Instance._boardManager;
+    public static PoolManager  Pool    => Instance._poolManager;
+    public static GamePalette  Palette => Instance._gamePalette;
+    public static Transform    Player  => Instance._playerTransform;
 
     private void Awake()
     {

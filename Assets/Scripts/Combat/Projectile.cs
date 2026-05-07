@@ -3,10 +3,14 @@ using UnityEngine;
 
 public class Projectile : MonoBehaviour, IPoolable
 {
-    [SerializeField] private int _damage = 1;
+    [SerializeField] private int       _damage       = 1;
+    [SerializeField] private LayerMask _damageLayers = ~0;
 
     private Rigidbody2D _rb;
-    private Action _returnToPool;
+    private Action      _returnToPool;
+    private Vector2     _spawnPosition;
+    private float       _maxDistanceSqr  = float.MaxValue;
+    private Collider2D  _ignoredCollider;
 
     private void Awake()
     {
@@ -17,7 +21,9 @@ public class Projectile : MonoBehaviour, IPoolable
     {
         gameObject.SetActive(true);
         _rb.linearVelocity = Vector2.zero;
-        _returnToPool = null;
+        _returnToPool      = null;
+        _maxDistanceSqr    = float.MaxValue;
+        _ignoredCollider   = null;
     }
 
     public void OnDespawn()
@@ -26,27 +32,43 @@ public class Projectile : MonoBehaviour, IPoolable
         gameObject.SetActive(false);
     }
 
-    public void Launch(Vector2 direction, float speedInTiles, Action returnToPool)
+    public void SetDamage(int damage) => _damage = damage;
+
+    public void Launch(Vector2 direction, float speedInTiles, Action returnToPool,
+        float maxDistance = float.MaxValue, Collider2D ignore = null)
     {
         float speed = speedInTiles * GameManager.Board.TileSize;
         _rb.linearVelocity = direction.normalized * speed;
         _returnToPool = returnToPool;
+        _spawnPosition   = transform.position;
+        _maxDistanceSqr  = maxDistance * maxDistance;
+        _ignoredCollider = ignore;
     }
 
     private void Update()
     {
+        if (((Vector2)transform.position - _spawnPosition).sqrMagnitude >= _maxDistanceSqr)
+        {
+            Despawn();
+            return;
+        }
         if (!GameManager.Board.IsInBounds(GameManager.Board.WorldToGrid(transform.position)))
             Despawn();
     }
 
     private void OnTriggerEnter2D(Collider2D other)
     {
-        other.GetComponent<IDamageable>()?.TakeDamage(_damage);
+        if (other == _ignoredCollider) return;
+        if ((_damageLayers & (1 << other.gameObject.layer)) != 0)
+            other.GetComponent<IDamageable>()?.TakeDamage(_damage);
         Despawn();
     }
 
     private void Despawn()
     {
-        _returnToPool?.Invoke();
+        if (_returnToPool == null) return;
+        var cb = _returnToPool;
+        _returnToPool = null;
+        cb.Invoke();
     }
 }

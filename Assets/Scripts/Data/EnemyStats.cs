@@ -10,9 +10,10 @@ public class EnemyStats : ScriptableObject
     [SerializeField] private float _moveSpeedInTiles = 1f;
 
     [Header("Shooting")]
-    [SerializeField] private float _fireInterval        = 3f;    // seconds between shots
+    [SerializeField] private float _fireInterval           = 3f;
     [SerializeField] private float _projectileSpeedInTiles = 4f;
-    [SerializeField] private float _telegraphDuration   = 1.2f;
+    [SerializeField] private float _telegraphDuration      = 1.2f;
+    [SerializeField] private int   _projectileDamage       = 20;
 
     [Header("Alert")]
     [SerializeField] private float _alertThresholdInTiles = 3f;
@@ -24,6 +25,7 @@ public class EnemyStats : ScriptableObject
     public float FireInterval           => _fireInterval;
     public float ProjectileSpeedInTiles => _projectileSpeedInTiles;
     public float TelegraphDuration      => _telegraphDuration;
+    public int   ProjectileDamage       => _projectileDamage;
     public float AlertThresholdInTiles  => _alertThresholdInTiles;
     public float IdleShotProbability    => _idleShotProbability;
     public float AlertShotProbability   => _alertShotProbability;
