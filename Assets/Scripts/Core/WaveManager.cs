@@ -17,6 +17,7 @@ public class WaveManager : MonoBehaviour
     private int             _stepCount;
     private int             _spawnedEnemies;
     private int             _deadEnemies;
+    private int             _totalWaveEnemies;
     private List<EnemyBase> _waveEnemies = new();
     private Coroutine       _stepRoutine;
     private float           _phaseStartTime;
@@ -58,6 +59,10 @@ public class WaveManager : MonoBehaviour
         _waveEnemies.Clear();
 
         WaveData data = _waves[_currentWaveIndex];
+
+        _totalWaveEnemies = data.InitialSpawns.Count;
+        foreach (var batch in data.Reinforcements)
+            _totalWaveEnemies += batch.Spawns.Count;
 
         foreach (var spawn in data.InitialSpawns)
             SpawnEnemy(spawn.Prefab, spawn.Tile);
@@ -152,7 +157,7 @@ public class WaveManager : MonoBehaviour
             }
         }
 
-        if (_deadEnemies >= _spawnedEnemies)
+        if (_deadEnemies >= _totalWaveEnemies)
         {
             if (_currentWaveIndex >= _waves.Count - 1)
                 GameManager.Instance.TriggerWin();

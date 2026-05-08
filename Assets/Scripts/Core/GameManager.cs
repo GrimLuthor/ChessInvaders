@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private Transform     _playerTransform;
     [SerializeField] private WaveManager   _waveManager;
     [SerializeField] private PlayerHealth  _playerHealth;
+    [SerializeField] private EndScreen     _gameOverScreen;
+    [SerializeField] private EndScreen     _winScreen;
 
     public static BoardManager  Board        => Instance._boardManager;
     public static PoolManager   Pool         => Instance._poolManager;
@@ -35,13 +37,11 @@ public class GameManager : MonoBehaviour
     
     public void TriggerGameOver()
     {
-        // Phase 5: show game over screen
-        Debug.Log("Game Over");
+        _gameOverScreen.Show();
     }
 
     public void TriggerWin()
     {
-        // Phase 5: show win screen
-        Debug.Log("You Win!");
+        _winScreen.Show();
     }
 }
