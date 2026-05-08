@@ -5,10 +5,13 @@ public class PlayerMovement : MonoBehaviour
 {
     [SerializeField] private PlayerStats _stats;
 
+    [SerializeField] private float _knockbackDecay = 20f;
+
     private Rigidbody2D _rb;
-    private float _speed;
+    private float   _speed;
     private Vector2 _minBounds;
     private Vector2 _maxBounds;
+    private Vector2 _knockback;
 
     private void Awake()
     {
@@ -28,12 +31,19 @@ public class PlayerMovement : MonoBehaviour
         _maxBounds = boardCenter + Vector2.one * halfExtent;
     }
 
+    public void ApplyKnockback(Vector2 direction, float force)
+    {
+        _knockback = direction * force;
+    }
+
     private void FixedUpdate()
     {
-        Vector2 input = ReadInput();
-        if (input == Vector2.zero) return;
+        Vector2 input  = ReadInput();
+        Vector2 move   = (input != Vector2.zero ? input.normalized * _speed : Vector2.zero) + _knockback;
 
-        Vector2 newPos = _rb.position + input.normalized * _speed * Time.fixedDeltaTime;
+        _knockback = Vector2.MoveTowards(_knockback, Vector2.zero, _knockbackDecay * Time.fixedDeltaTime);
+
+        Vector2 newPos = _rb.position + move * Time.fixedDeltaTime;
         newPos.x = Mathf.Clamp(newPos.x, _minBounds.x, _maxBounds.x);
         newPos.y = Mathf.Clamp(newPos.y, _minBounds.y, _maxBounds.y);
         _rb.MovePosition(newPos);

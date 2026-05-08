@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 8924699911559388179}
   - component: {fileID: 8200147376442826551}
   - component: {fileID: 1942615010985090246}
+  - component: {fileID: -1812064646210022609}
   m_Layer: 8
   m_Name: EnemyPawn
   m_TagString: Untagged
@@ -357,7 +358,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -377,6 +378,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootingAI
   _pieceType: 0
   _forwardDir: {x: 0, y: -1}
+--- !u!114 &-1812064646210022609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5356343743317896147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 924c6dce5000134479f8d0387e835fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
+  _damage: 5
+  _pushForce: 8
 --- !u!1 &8571500231836581762
 GameObject:
   m_ObjectHideFlags: 0

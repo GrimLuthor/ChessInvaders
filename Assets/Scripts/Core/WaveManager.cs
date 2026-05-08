@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,7 +12,8 @@ public class WaveManager : MonoBehaviour
     [SerializeField] private float          _restDuration   = 10f;
     [SerializeField] private Transform      _enemyContainer;
 
-    [SerializeField] private float _rankBreachDamage = 20f;
+    [SerializeField] private float _rankBreachDamage  = 20f;
+    [SerializeField] private float _stepMoveDuration  = 0.4f;
 
     private int             _currentWaveIndex = -1;
     private int             _stepCount;
@@ -20,6 +22,7 @@ public class WaveManager : MonoBehaviour
     private int             _totalWaveEnemies;
     private List<EnemyBase> _waveEnemies = new();
     private Coroutine       _stepRoutine;
+    private Coroutine       _restRoutine;
     private float           _phaseStartTime;
     private bool            _isResting;
 
@@ -34,6 +37,18 @@ public class WaveManager : MonoBehaviour
     public bool IsResting         => _isResting;
     public int  CurrentWaveNumber => _currentWaveIndex + 1;
     public int  WaveCount         => _waves.Count;
+
+    public event Action OnWaveStarted;
+    public event Action OnRestStarted;
+    public event Action OnStepFired;
+
+    public IEnumerable<ReinforcementBatch> GetUpcomingBatches()
+    {
+        if (_currentWaveIndex < 0 || _currentWaveIndex >= _waves.Count) yield break;
+        var reinforcements = _waves[_currentWaveIndex].Reinforcements;
+        for (int i = _stepCount; i < reinforcements.Count; i++)
+            yield return reinforcements[i];
+    }
 
     private void Awake()
     {
@@ -67,6 +82,7 @@ public class WaveManager : MonoBehaviour
         foreach (var spawn in data.InitialSpawns)
             SpawnEnemy(spawn.Prefab, spawn.Tile);
 
+        OnWaveStarted?.Invoke();
         _stepRoutine = StartCoroutine(StepLoop());
     }
 
@@ -76,9 +92,10 @@ public class WaveManager : MonoBehaviour
         {
             _phaseStartTime = Time.time;
             yield return new WaitForSeconds(_stepInterval);
-            StepAllEnemies();
+            yield return StepAllEnemies();
             SpawnReinforcements();
             _stepCount++;
+            OnStepFired?.Invoke();
         }
     }
 
@@ -87,14 +104,23 @@ public class WaveManager : MonoBehaviour
         if (_stepRoutine != null) StopCoroutine(_stepRoutine);
         _isResting      = true;
         _phaseStartTime = Time.time;
+        OnRestStarted?.Invoke();
         yield return new WaitForSeconds(_restDuration);
+        _isResting = false;
+        StartNextWave();
+    }
+
+    public void SkipRest()
+    {
+        if (!_isResting) return;
+        if (_restRoutine != null) StopCoroutine(_restRoutine);
         _isResting = false;
         StartNextWave();
     }
 
     // ── Enemy step ───────────────────────────────────────────────────────────
 
-    private void StepAllEnemies()
+    private IEnumerator StepAllEnemies()
     {
         foreach (var enemy in _waveEnemies)
         {
@@ -102,7 +128,7 @@ public class WaveManager : MonoBehaviour
             var next = new Vector2Int(enemy.TilePosition.x, enemy.TilePosition.y - 1);
             if (GameManager.Board.IsInBounds(next))
             {
-                enemy.SetTilePosition(next);
+                enemy.SmoothStep(next, _stepMoveDuration);
             }
             else
             {
@@ -116,6 +142,7 @@ public class WaveManager : MonoBehaviour
                 enemy.SetTilePosition(new Vector2Int(enemy.TilePosition.x, GameManager.Board.BoardSize - 1));
             }
         }
+        yield return new WaitForSeconds(_stepMoveDuration);
     }
 
     // ── Spawning ─────────────────────────────────────────────────────────────
@@ -162,7 +189,7 @@ public class WaveManager : MonoBehaviour
             if (_currentWaveIndex >= _waves.Count - 1)
                 GameManager.Instance.TriggerWin();
             else
-                StartCoroutine(RestPeriod());
+                _restRoutine = StartCoroutine(RestPeriod());
         }
     }
 }

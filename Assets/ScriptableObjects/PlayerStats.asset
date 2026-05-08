@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerStats
   _maxHp: 100
   _moveSpeedInTiles: 5
-  _fireRatePerSecond: 5
+  _fireRatePerSecond: 15
   _bulletSpeedInTiles: 10
   _iFrameDuration: 0.3
   _burstCooldown: 8

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8542754774843823897}
   - component: {fileID: 8238661856395484058}
   - component: {fileID: 5054773917545202586}
+  - component: {fileID: 7149826660253392310}
   m_Layer: 8
   m_Name: EnemyKing
   m_TagString: Untagged
@@ -80,7 +81,7 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
@@ -100,6 +101,20 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ShootingAI
   _pieceType: 5
   _forwardDir: {x: 0, y: -1}
+--- !u!114 &7149826660253392310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660697510946740083}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 924c6dce5000134479f8d0387e835fc3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
+  _damage: 5
+  _pushForce: 8
 --- !u!1 &4110395460066412564
 GameObject:
   m_ObjectHideFlags: 0

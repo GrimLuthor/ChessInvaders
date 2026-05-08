@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,6 +58,25 @@ public class EnemyBase : MonoBehaviour, IDamageable
         _positionSet = true;
         TilePosition = tile;
         transform.position = GameManager.Board.GetTileCenter(tile);
+    }
+
+    public void SmoothStep(Vector2Int targetTile, float duration)
+    {
+        TilePosition = targetTile;
+        StartCoroutine(SmoothMoveRoutine(GameManager.Board.GetTileCenter(targetTile), duration));
+    }
+
+    private IEnumerator SmoothMoveRoutine(Vector3 target, float duration)
+    {
+        Vector3 start   = transform.position;
+        float   elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed           += Time.deltaTime;
+            transform.position = Vector3.Lerp(start, target, Mathf.Clamp01(elapsed / duration));
+            yield return null;
+        }
+        transform.position = target;
     }
 
     private void Die()
