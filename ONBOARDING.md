@@ -2,7 +2,7 @@ Chess Invaders — ONBOARDING.md
 
 This file is for collaborators joining the project. It is updated regularly as the project evolves.
 Last updated: 2026-05-08
-Current stage: Gray box — Phases 1–3 complete, Phase 4 (wave system) in progress
+Current stage: Gray box — Phases 1–4 complete, Phase 5 (UI polish) in progress
 
 
 What Is This Game
@@ -19,10 +19,10 @@ Assets/
 ├── Scripts/
 │   ├── Core/            # GameManager, WaveManager, BoardManager, PoolManager
 │   ├── Player/          # PlayerMovement, PlayerShooting, PlayerHealth
-│   ├── Enemy/           # EnemyBase, ShootingAI, AttackPatterns, IntentIndicator
+│   ├── Enemy/           # EnemyBase, ShootingAI, AttackPatterns, IntentIndicator, EnemyContact
 │   ├── Combat/          # Projectile
 │   ├── Data/            # WaveData ScriptableObject
-│   ├── UI/              # StepTimerUI
+│   ├── UI/              # StepTimerUI, EndScreen, IncomingUI, SkipRestButton
 │   └── Utils/           # PlaceholderLabel, Layers
 ├── Prefabs/
 │   ├── Player/
@@ -46,11 +46,15 @@ Current State
 | Player health + HP bar | ✅ Done |
 | Enemy base (all 6 pieces) | ✅ Done |
 | Enemy AI + shooting patterns | ✅ Done |
-| Wave system (WaveManager) | 🔄 In progress |
+| Wave system (WaveManager) | ✅ Done |
+| Smooth enemy step movement | ✅ Done |
 | Rank breach + pawn promotion | ✅ Done |
+| Enemy contact damage + knockback | ✅ Done |
 | Step timer UI | ✅ Done |
-| Wave roster UI | ❌ Not started |
-| Win / game over screens | ❌ Not started (stubs only) |
+| Win / game over screens | ✅ Done |
+| Incoming reinforcements UI | ✅ Done |
+| Skip rest (Q key) | ✅ Done |
+| Wave transition overlay | ❌ Not started |
 
 
 Key Architecture Decisions
@@ -97,7 +101,12 @@ This means enemies are more aggressive when the player is in their line of fire,
 --- Wave system ---
 WaveData (ScriptableObject) defines one wave: a list of InitialSpawns (prefab + tile) and a list of ReinforcementBatches. Batch[0] spawns after the first step tick, batch[1] after the second, etc., always at the back rank.
 
-WaveManager owns the global step timer. On each tick, it moves ALL enemies forward one tile in a single loop — enemies do not run their own timers. Wave clear is detected by comparing _deadEnemies against _spawnedEnemies (only actually-spawned enemies count, so killing all on-board enemies before reinforcements arrive correctly ends the wave).
+WaveManager owns the global step timer. On each tick, it moves ALL enemies forward one tile in a single loop — enemies do not run their own timers. Enemy step movement is animated (lerp over _stepMoveDuration seconds). Wave clear uses _totalWaveEnemies, pre-counted at wave start from initial + all reinforcement batches — this prevents early clear when initial enemies die before reinforcements arrive.
+
+WaveManager exposes three events: OnWaveStarted, OnRestStarted, OnStepFired. Subscribe to these for any UI that reacts to wave state. GetUpcomingBatches() returns the remaining reinforcement batches. SkipRest() ends the rest period immediately.
+
+--- Enemy contact damage ---
+EnemyContact on each enemy root detects player overlap via a trigger collider (on the Enemy layer). It calls PlayerHealth.TakeDamage() (i-frames throttle the rate naturally) and PlayerMovement.ApplyKnockback(). Knockback is a decaying velocity vector owned by PlayerMovement and applied each FixedUpdate before the board-bounds clamp — no AddForce/rigidbody velocity involved.
 
 --- Rank breach and pawn promotion ---
 If an enemy steps off the bottom of the board (rank 0), it:
