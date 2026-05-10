@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerHealth  _playerHealth;
     [SerializeField] private EndScreen     _gameOverScreen;
     [SerializeField] private EndScreen     _winScreen;
+    [SerializeField] private PauseMenu     _pauseMenu;
 
     public static BoardManager  Board        => Instance._boardManager;
     public static PoolManager   Pool         => Instance._poolManager;
@@ -37,11 +38,13 @@ public class GameManager : MonoBehaviour
     
     public void TriggerGameOver()
     {
+        _pauseMenu.Disable();
         _gameOverScreen.Show();
     }
 
     public void TriggerWin()
     {
+        _pauseMenu.Disable();
         _winScreen.Show();
     }
 }
