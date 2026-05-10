@@ -1,8 +1,8 @@
 Chess Invaders — ONBOARDING.md
 
 This file is for collaborators joining the project. It is updated regularly as the project evolves.
-Last updated: 2026-05-08
-Current stage: Gray box — Phases 1–4 complete, Phase 5 (UI polish) in progress
+Last updated: 2026-05-10
+Current stage: Gray box — Phases 1–4 complete, Phase 5 (UI polish) mostly complete, one item remaining
 
 
 What Is This Game
@@ -22,7 +22,7 @@ Assets/
 │   ├── Enemy/           # EnemyBase, ShootingAI, AttackPatterns, IntentIndicator, EnemyContact
 │   ├── Combat/          # Projectile
 │   ├── Data/            # WaveData ScriptableObject
-│   ├── UI/              # StepTimerUI, EndScreen, IncomingUI, SkipRestButton
+│   ├── UI/              # StepTimerUI, EndScreen, IncomingUI, SkipRestButton, PauseMenu, MainMenu
 │   └── Utils/           # PlaceholderLabel, Layers
 ├── Prefabs/
 │   ├── Player/
@@ -33,7 +33,8 @@ Assets/
 │   ├── WaveData_[1-3].asset
 │   └── GamePalette.asset
 └── Scenes/
-    └── SampleScene.unity
+    ├── MainMenu.unity   # boot scene — Play button loads Game
+    └── Game.unity       # main gameplay scene
 
 
 Current State
@@ -54,6 +55,8 @@ Current State
 | Win / game over screens | ✅ Done |
 | Incoming reinforcements UI | ✅ Done |
 | Skip rest (Q key) | ✅ Done |
+| Pause menu (Escape) | ✅ Done |
+| Main menu scene | ✅ Done |
 | Wave transition overlay | ❌ Not started |
 
 
@@ -148,7 +151,6 @@ What's Out of Scope (for now)
 
 Player burst attack (deferred post gray box)
 Sound / music
-Main menu
 Save/load
 Difficulty settings
 Gamepad support
