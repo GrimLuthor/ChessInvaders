@@ -38,13 +38,15 @@ public class GameManager : MonoBehaviour
     
     public void TriggerGameOver()
     {
-        _pauseMenu.Disable();
+        if (_pauseMenu == null) Debug.LogError("GameManager: _pauseMenu is not assigned in the inspector.", this);
+        else _pauseMenu.Disable();
         _gameOverScreen.Show();
     }
 
     public void TriggerWin()
     {
-        _pauseMenu.Disable();
+        if (_pauseMenu == null) Debug.LogError("GameManager: _pauseMenu is not assigned in the inspector.", this);
+        else _pauseMenu.Disable();
         _winScreen.Show();
     }
 }

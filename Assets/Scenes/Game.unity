@@ -2056,7 +2056,7 @@ MonoBehaviour:
   _playerHealth: {fileID: 562553141}
   _gameOverScreen: {fileID: 1923577438}
   _winScreen: {fileID: 1042632257}
-  _pauseMenu: {fileID: 0}
+  _pauseMenu: {fileID: 1951069483}
 --- !u!4 &970848250
 Transform:
   m_ObjectHideFlags: 0
