@@ -23,6 +23,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     // Fallback for scene-placed test enemies. Ignored when WaveManager calls SetTilePosition first.
     [SerializeField] private Vector2Int _startingTile = new(4, 6);
+    [SerializeField] private float      _verticalOffset = 0.2f;
     private bool _positionSet;
 
     private void Awake()
@@ -57,14 +58,17 @@ public class EnemyBase : MonoBehaviour, IDamageable
     {
         _positionSet = true;
         TilePosition = tile;
-        transform.position = GameManager.Board.GetTileCenter(tile);
+        transform.position = TileCenter(tile);
     }
 
     public void SmoothStep(Vector2Int targetTile, float duration)
     {
         TilePosition = targetTile;
-        StartCoroutine(SmoothMoveRoutine(GameManager.Board.GetTileCenter(targetTile), duration));
+        StartCoroutine(SmoothMoveRoutine(TileCenter(targetTile), duration));
     }
+
+    private Vector3 TileCenter(Vector2Int tile) =>
+        GameManager.Board.GetTileCenter(tile) + Vector3.up * (_verticalOffset * GameManager.Board.TileSize);
 
     private IEnumerator SmoothMoveRoutine(Vector3 target, float duration)
     {

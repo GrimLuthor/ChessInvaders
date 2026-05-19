@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2744866674477596621}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -59,8 +59,8 @@ Transform:
   m_GameObject: {fileID: 2950973691954831491}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.15, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7554599891056325093}
@@ -139,6 +139,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
   _pieceType: 1
   _spriteRenderer: {fileID: 2819821860696146133}
+  _idleSprite: {fileID: 0}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &3880985420626064332
 GameObject:
   m_ObjectHideFlags: 0
@@ -167,7 +170,7 @@ RectTransform:
   m_GameObject: {fileID: 3880985420626064332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1111112, y: 1.1111112, z: 1}
+  m_LocalScale: {x: 0.55, y: 0.55, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 562016921201342289}
@@ -199,7 +202,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 352418867
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &7484593912158927047
@@ -322,6 +325,8 @@ GameObject:
   - component: {fileID: 2940599853346254610}
   - component: {fileID: 9143024225944277745}
   - component: {fileID: -8889950571197594525}
+  - component: {fileID: 1222183437820319043}
+  - component: {fileID: 1393920047322908495}
   m_Layer: 8
   m_Name: EnemyRook
   m_TagString: Untagged
@@ -424,6 +429,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
   _damage: 5
   _pushForce: 8
+--- !u!114 &1222183437820319043
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8170246865124425278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fe6e88607bd08d4f9a871ba9657b73e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
+  _pieceType: 1
+  _spriteRenderer: {fileID: 2819821860696146133}
+  _idleSprite: {fileID: 21300000, guid: 0e3867918a1569e44a1cb46420379df0, type: 3}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &1393920047322908495
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8170246865124425278}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6900f26a4c7c449449a215312dd65e98, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::IceWavePool
+  _prefab: {fileID: 7388150338310455602, guid: 8a70775b568dca445952fe5fb263bb44, type: 3}
+  _poolSize: 3
 --- !u!1 &8397719851974946499
 GameObject:
   m_ObjectHideFlags: 0

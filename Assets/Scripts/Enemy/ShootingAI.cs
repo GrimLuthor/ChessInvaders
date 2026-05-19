@@ -21,12 +21,22 @@ public class ShootingAI : MonoBehaviour
     private Coroutine        _shootRoutine;
     private IntentIndicator  _activeIndicator;
     private PlaceholderLabel _label;
+    private SpriteRenderer   _spriteRenderer;
+    private ProjectilePool   _projectilePool;
+    private LaserPool        _laserPool;
+    private IceWavePool      _iceWavePool;
+    private MeleeSwingPool   _meleeSwingPool;
 
     private void Awake()
     {
-        _enemy    = GetComponent<EnemyBase>();
-        _collider = GetComponent<Collider2D>();
-        _label    = GetComponentInChildren<PlaceholderLabel>();
+        _enemy          = GetComponent<EnemyBase>();
+        _collider       = GetComponent<Collider2D>();
+        _label          = GetComponentInChildren<PlaceholderLabel>();
+        _spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _projectilePool = GetComponent<ProjectilePool>();
+        _laserPool      = GetComponent<LaserPool>();
+        _iceWavePool    = GetComponent<IceWavePool>();
+        _meleeSwingPool = GetComponent<MeleeSwingPool>();
     }
 
     private void OnEnable()
@@ -109,17 +119,50 @@ public class ShootingAI : MonoBehaviour
         Vector2 dir = targetWorld - (Vector2)transform.position;
         if (dir.sqrMagnitude < 0.001f) yield break;
 
-        Projectile p = GameManager.Pool.GetEnemyProjectile();
+        if (_laserPool != null)
+        {
+            LaserRay ray = _laserPool.Get();
+            ray.Fire(transform.position, targetWorld, _enemy.Stats.ProjectileDamage,
+                () => _laserPool.Return(ray));
+            yield break;
+        }
+
+        if (_iceWavePool != null)
+        {
+            IceWave wave = _iceWavePool.Get();
+            wave.Fire(_enemy.TilePosition.x, _enemy.Stats.ProjectileDamage, () => _iceWavePool.Return(wave));
+            yield break;
+        }
+
+        if (_meleeSwingPool != null)
+        {
+            MeleeSwing swing = _meleeSwingPool.Get();
+            swing.Fire(transform.position, _enemy.TilePosition, _enemy.Stats.ProjectileDamage,
+                _spriteRenderer, () => _meleeSwingPool.Return(swing));
+            yield break;
+        }
+
+        bool       custom = _projectilePool != null;
+        Projectile p      = custom ? _projectilePool.Get() : GameManager.Pool.GetEnemyProjectile();
+
         p.SetDamage(_enemy.Stats.ProjectileDamage);
         if (_pieceType == PieceType.Knight)
             p.SetPassThrough(1 << Layers.Enemy);
-        p.transform.SetPositionAndRotation(transform.position, Quaternion.identity);
+
+        bool  rotate = !custom || _projectilePool.RotateToDirection;
+        float angle  = rotate ? Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg : 0f;
+        p.transform.SetPositionAndRotation(transform.position, Quaternion.Euler(0f, 0f, angle));
+
+        if (custom && _projectilePool.FlipXToDirection)
+            p.SetFlipX(dir.x < 0f);
+
         float maxDist = AttackPatterns.IsSliding(_pieceType)
             ? float.MaxValue
             : dir.magnitude + GameManager.Board.TileSize * 0.5f;
 
         p.Launch(dir.normalized, _enemy.Stats.ProjectileSpeedInTiles,
-            () => GameManager.Pool.ReturnEnemyProjectile(p), maxDist, _collider);
+            custom ? () => _projectilePool.Return(p) : () => GameManager.Pool.ReturnEnemyProjectile(p),
+            maxDist, _collider);
     }
 
     private bool IsTileBlockedByEnemy(Vector2Int tile)

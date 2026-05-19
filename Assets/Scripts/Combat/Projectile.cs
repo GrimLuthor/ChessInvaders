@@ -7,6 +7,8 @@ public class Projectile : MonoBehaviour, IPoolable
     [SerializeField] private LayerMask _damageLayers     = ~0;
     [SerializeField] private LayerMask _passThroughLayers = 0;
 
+    [SerializeField] private SpriteRenderer _spriteRenderer;
+
     private Rigidbody2D _rb;
     private Action      _returnToPool;
     private Vector2     _spawnPosition;
@@ -36,6 +38,7 @@ public class Projectile : MonoBehaviour, IPoolable
 
     public void SetDamage(int damage)               => _damage = damage;
     public void SetPassThrough(LayerMask layers)    => _passThroughLayers = layers;
+    public void SetFlipX(bool flip)                 { if (_spriteRenderer != null) _spriteRenderer.flipX = flip; }
 
     public void Launch(Vector2 direction, float speedInTiles, Action returnToPool,
         float maxDistance = float.MaxValue, Collider2D ignore = null)

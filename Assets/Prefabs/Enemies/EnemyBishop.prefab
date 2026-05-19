@@ -27,8 +27,8 @@ Transform:
   m_GameObject: {fileID: 3339531142358250009}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.3, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1492569572853237416}
@@ -107,6 +107,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
   _pieceType: 2
   _spriteRenderer: {fileID: 6052946590943911097}
+  _idleSprite: {fileID: 0}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &4798547141714343764
 GameObject:
   m_ObjectHideFlags: 0
@@ -285,7 +288,7 @@ RectTransform:
   m_GameObject: {fileID: 5623780563946022596}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1111112, y: 1.1111112, z: 1}
+  m_LocalScale: {x: 0.55, y: 0.55, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7502075263146453263}
@@ -317,7 +320,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 352418867
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &4988804985077958480
@@ -365,6 +368,8 @@ GameObject:
   - component: {fileID: 7948503796699333241}
   - component: {fileID: 6312177631120742223}
   - component: {fileID: 1339492085071147682}
+  - component: {fileID: -959144914493117159}
+  - component: {fileID: -4194232685263347073}
   m_Layer: 8
   m_Name: EnemyBishop
   m_TagString: Untagged
@@ -467,6 +472,38 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
   _damage: 5
   _pushForce: 8
+--- !u!114 &-959144914493117159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5933610760209763804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fe6e88607bd08d4f9a871ba9657b73e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
+  _pieceType: 2
+  _spriteRenderer: {fileID: 6052946590943911097}
+  _idleSprite: {fileID: -7089794269890206200, guid: 7b4d5b5b68d65bd4bbcb73a02c07a7f6, type: 3}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &-4194232685263347073
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5933610760209763804}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14ea02afe5371746a2b207fa8d3c423, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
+  _prefab: {fileID: 6836682857364695925, guid: b5f7cfc4f0585c546b995432df422889, type: 3}
+  _poolSize: 10
+  _rotateToDirection: 0
 --- !u!1 &5933641496830653222
 GameObject:
   m_ObjectHideFlags: 0

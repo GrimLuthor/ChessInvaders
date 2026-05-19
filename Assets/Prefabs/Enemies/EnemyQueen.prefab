@@ -102,8 +102,8 @@ Transform:
   m_GameObject: {fileID: 2674803370001635742}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.2, z: 0}
+  m_LocalScale: {x: 1.8, y: 1.8, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5482345345579370756}
@@ -182,6 +182,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
   _pieceType: 4
   _spriteRenderer: {fileID: 1291890251897661212}
+  _idleSprite: {fileID: 0}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
 --- !u!1 &2880284879746260658
 GameObject:
   m_ObjectHideFlags: 0
@@ -207,7 +210,7 @@ Transform:
   m_GameObject: {fileID: 2880284879746260658}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.6, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -302,6 +305,8 @@ GameObject:
   - component: {fileID: 4687488671114391173}
   - component: {fileID: 1187419356486180117}
   - component: {fileID: 3840052590545896088}
+  - component: {fileID: -4758410063483054147}
+  - component: {fileID: 7304527303694926699}
   m_Layer: 8
   m_Name: EnemyQueen
   m_TagString: Untagged
@@ -404,6 +409,37 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::EnemyContact
   _damage: 5
   _pushForce: 8
+--- !u!114 &-4758410063483054147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7048152007334016996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8fe6e88607bd08d4f9a871ba9657b73e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceholderLabel
+  _pieceType: 4
+  _spriteRenderer: {fileID: 0}
+  _idleSprite: {fileID: 6851498383279292439, guid: 7a3552af6788c1741b3157752b2553ad, type: 3}
+  _promotedSprite: {fileID: 0}
+  _promotedOffset: {x: 0, y: 0, z: 0}
+--- !u!114 &7304527303694926699
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7048152007334016996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14ea02afe5371746a2b207fa8d3c423, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ProjectilePool
+  _prefab: {fileID: 1488076643541201833, guid: 865e0e2426e47bf499f6147205260d84, type: 3}
+  _poolSize: 10
 --- !u!1 &7656504029124972525
 GameObject:
   m_ObjectHideFlags: 0
@@ -432,7 +468,7 @@ RectTransform:
   m_GameObject: {fileID: 7656504029124972525}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.1111112, y: 1.1111112, z: 1}
+  m_LocalScale: {x: 0.55, y: 0.55, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8842834907729573311}
@@ -464,7 +500,7 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
+  m_SortingLayerID: 352418867
   m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &7114099413727217830

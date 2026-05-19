@@ -118,6 +118,22 @@ public class WaveManager : MonoBehaviour
         StartNextWave();
     }
 
+    public void SkipStep()
+    {
+        if (_isResting) return;
+        if (_stepRoutine != null) StopCoroutine(_stepRoutine);
+        _stepRoutine = StartCoroutine(ImmediateStep());
+    }
+
+    private IEnumerator ImmediateStep()
+    {
+        yield return StepAllEnemies();
+        SpawnReinforcements();
+        _stepCount++;
+        OnStepFired?.Invoke();
+        _stepRoutine = StartCoroutine(StepLoop());
+    }
+
     // ── Enemy step ───────────────────────────────────────────────────────────
 
     private IEnumerator StepAllEnemies()
